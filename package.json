@@ -1,6 +1,6 @@
 {
   "name": "@togtokh.dev/hipay",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "hipay is a library for payment gateway.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
