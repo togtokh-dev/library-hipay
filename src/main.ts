@@ -108,7 +108,7 @@ const CHECKOUT_STATUS = async (
     const resData = await axiosMaster(
       {
         method: "get",
-        url: `${HIPAY.host}/checkout/api/checkoutid/${checkoutId}`,
+        url: `${HIPAY.host}/checkout/api/${checkoutId}`,
         headers: {
           Authorization: `Bearer ${HIPAY.token}`,
           "Content-Type": "application/json",
