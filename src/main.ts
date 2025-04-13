@@ -1,28 +1,26 @@
-import axios from "axios";
+import axiosMaster from "axios-master";
 import { AxiosResponse } from "axios";
 import HIPAY from ".";
 
-// ✅ Type definition for checkout payload
 type checkoutT = {
-  entityId?: string; // Optional override of HIPAY.entityId
-  redirect_uri: string; // URL where the user is redirected after payment
-  webhook_url: string; // URL to receive asynchronous payment result
-  amount: number; // Payment amount
-  currency?: "MNT" | "USD"; // Optional currency
-  qrData?: boolean; // If true, QR code is returned
+  entityId?: string;
+  redirect_uri: string;
+  webhook_url: string;
+  amount: number;
+  currency?: "MNT" | "USD";
+  qrData?: boolean;
   items: {
-    itemno: string; // Item code (max 32 characters)
-    name: string; // Item name (max 128 characters)
-    price: number; // Price per unit
-    quantity: number; // Quantity
-    brand: string; // Brand name (max 32 characters)
-    measure: string; // Measurement unit (e.g., pcs, kg)
-    vat: number; // VAT amount
-    citytax: number; // City tax amount
+    itemno: string;
+    name: string;
+    price: number;
+    quantity: number;
+    brand: string;
+    measure: string;
+    vat: number;
+    citytax: number;
   }[];
 };
 
-// ✅ Main function to create a HIPAY checkout
 const CREATE = async (
   body: checkoutT,
 ): Promise<{
@@ -35,7 +33,6 @@ const CREATE = async (
   };
 }> => {
   try {
-    // ✅ Payload to be sent to HIPAY API
     const payload = {
       entityId: HIPAY.entityId || body.entityId,
       redirect_uri: body.redirect_uri,
@@ -45,18 +42,26 @@ const CREATE = async (
       items: body.items,
     };
 
-    // ✅ API call to HIPAY /checkout endpoint
-    const res = await axios.post(`${HIPAY.host}/checkout`, payload, {
-      headers: {
-        Authorization: `Bearer ${HIPAY.token}`, // Token from HIPAY merchant config
-        "Content-Type": "application/json",
-        Accept: "application/json",
+    const resData = await axiosMaster(
+      {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${HIPAY.host}/checkout`,
+        headers: {
+          Authorization: `Bearer ${HIPAY.token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        data: payload,
       },
-    });
+      {
+        name: "HIPAY CREATE",
+        logger(data) {
+          if (HIPAY.logger) console.log(data.json);
+        },
+      },
+    );
 
-    const resData = res.data;
-
-    // ✅ Success case: code === 1
     if (resData.code === 1) {
       return {
         success: true,
@@ -68,14 +73,12 @@ const CREATE = async (
         },
       };
     } else {
-      // ✅ Error case but response received
       return {
         success: false,
         message: resData.message || resData.description || "Unknown failure",
       };
     }
   } catch (error) {
-    // ✅ Handle any unexpected network/API error
     const axiosError = error as AxiosResponse;
     console.error("Failed to fetch user info:", axiosError?.data?.data);
     return {
@@ -87,6 +90,7 @@ const CREATE = async (
     };
   }
 };
+
 const CHECKOUT_STATUS = async (
   checkoutId: string,
 ): Promise<{
@@ -101,21 +105,26 @@ const CHECKOUT_STATUS = async (
   };
 }> => {
   try {
-    const res = await axios.get(
-      `${HIPAY.host}/checkout/api/checkoutid/${checkoutId}`,
+    const resData = await axiosMaster(
       {
+        method: "get",
+        url: `${HIPAY.host}/checkout/api/checkoutid/${checkoutId}`,
         headers: {
-          Authorization: `Bearer ${HIPAY.token}`, // Merchant token
+          Authorization: `Bearer ${HIPAY.token}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         params: {
-          entityId: HIPAY.entityId, // Merchant entity ID
+          entityId: HIPAY.entityId,
+        },
+      },
+      {
+        name: "HIPAY STATUS",
+        logger(data) {
+          if (HIPAY.logger) console.log(data.json);
         },
       },
     );
-
-    const resData = res.data;
 
     if (resData.code === 1) {
       return {
@@ -147,6 +156,7 @@ const CHECKOUT_STATUS = async (
     };
   }
 };
+
 const CANCEL_CHECKOUT = async (
   checkoutId: string,
 ): Promise<{
@@ -154,21 +164,26 @@ const CANCEL_CHECKOUT = async (
   message: string;
 }> => {
   try {
-    const res = await axios.post(
-      `${HIPAY.host}/checkout/cancel`,
+    const resData = await axiosMaster(
       {
-        checkoutId, // ✅ Body: required field
-      },
-      {
+        method: "post",
+        url: `${HIPAY.host}/checkout/cancel`,
         headers: {
-          Authorization: `Bearer ${HIPAY.token}`, // ✅ Token
+          Authorization: `Bearer ${HIPAY.token}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        data: {
+          checkoutId,
+        },
+      },
+      {
+        name: "HIPAY CANCEL",
+        logger(data) {
+          if (HIPAY.logger) console.log(data.json);
+        },
       },
     );
-
-    const resData = res.data;
 
     if (resData.code === 1) {
       return {
@@ -193,6 +208,7 @@ const CANCEL_CHECKOUT = async (
     };
   }
 };
+
 const REFUND_PAYMENT = async (
   paymentId: string,
 ): Promise<{
@@ -204,22 +220,27 @@ const REFUND_PAYMENT = async (
   };
 }> => {
   try {
-    const res = await axios.post(
-      `${HIPAY.host}/payment/cancel`,
+    const resData = await axiosMaster(
       {
-        entityId: HIPAY.entityId, // 🏷️ Merchant registered client ID
-        paymentId, // 🏷️ Transaction ID to refund
-      },
-      {
+        method: "post",
+        url: `${HIPAY.host}/payment/cancel`,
         headers: {
-          Authorization: `Bearer ${HIPAY.token}`, // 🔐 Bearer token (client_secret)
+          Authorization: `Bearer ${HIPAY.token}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        data: {
+          entityId: HIPAY.entityId,
+          paymentId,
+        },
+      },
+      {
+        name: "HIPAY REFUND",
+        logger(data) {
+          if (HIPAY.logger) console.log(data.json);
+        },
       },
     );
-
-    const resData = res.data;
 
     if (resData.code === 1) {
       return {
@@ -249,4 +270,9 @@ const REFUND_PAYMENT = async (
   }
 };
 
-export default { CREATE, CHECKOUT_STATUS, CANCEL_CHECKOUT, REFUND_PAYMENT };
+export default {
+  CREATE,
+  CHECKOUT_STATUS,
+  CANCEL_CHECKOUT,
+  REFUND_PAYMENT,
+};

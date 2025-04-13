@@ -1,6 +1,6 @@
 {
   "name": "@togtokh.dev/hipay",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "hipay is a library for payment gateway.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,6 +31,7 @@
   "homepage": "https://github.com/togtokh-dev/library-hipay/#readme",
   "dependencies": {
     "axios": "^1.6.7",
+    "axios-master": "2.0.2",
     "https": "^1.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.0.4"

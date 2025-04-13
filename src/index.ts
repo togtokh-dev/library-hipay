@@ -10,6 +10,7 @@ export const jsonToQueryString = (params: { [key: string]: any }) => {
     .join("&");
   return query ? `?${query}` : "";
 };
+let logger = true;
 let entityId = "";
 let token = "";
 let host = "";
@@ -17,7 +18,17 @@ let hosts = {
   staging: "https://test.hipay.mn",
   prod: "https://sts.hipay.mn",
 };
-export default { token, entityId, hosts, host, auth, main, eCommerce, miniApp };
+export default {
+  token,
+  entityId,
+  hosts,
+  host,
+  auth,
+  main,
+  eCommerce,
+  miniApp,
+  logger,
+};
 
 export { default as main } from "./main";
 export { default as eCommerce } from "./e-commerce";

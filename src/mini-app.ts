@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosMaster from "axios-master";
 import HIPAY from ".";
 import { jsonToQueryString } from ".";
 
@@ -22,23 +22,28 @@ const getToken = async (
   params: GetUserTokenParams,
 ): Promise<GetUserTokenResponse> => {
   try {
-    const res = await axios.post(
-      `${HIPAY.host}/user/token`,
+    const resData = await axiosMaster(
       {
-        client_id: params.client_id,
-        client_secret: params.client_secret,
-        code: params.code,
-        grant_type: params.grant_type || "authorization_code",
-      },
-      {
+        method: "post",
+        url: `${HIPAY.host}/user/token`,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        data: {
+          client_id: params.client_id,
+          client_secret: params.client_secret,
+          code: params.code,
+          grant_type: params.grant_type || "authorization_code",
+        },
+      },
+      {
+        name: "HIPAY USER TOKEN",
+        logger(data) {
+          if (HIPAY.logger) console.log(data.json);
+        },
       },
     );
-
-    const resData = res.data;
 
     if (resData.code === 1) {
       return {
@@ -66,6 +71,7 @@ const getToken = async (
     };
   }
 };
+
 type UserInfoResponse = {
   success: boolean;
   message: string;
@@ -80,14 +86,22 @@ type UserInfoResponse = {
 
 const getUserInfo = async (accessToken: string): Promise<UserInfoResponse> => {
   try {
-    const res = await axios.get(`${HIPAY.host}/user/info`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        Accept: "application/json",
+    const resData = await axiosMaster(
+      {
+        method: "get",
+        url: `${HIPAY.host}/user/info`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/json",
+        },
       },
-    });
-
-    const resData = res.data;
+      {
+        name: "HIPAY USER INFO",
+        logger(data) {
+          if (HIPAY.logger) console.log(data.json);
+        },
+      },
+    );
 
     if (resData.code === 1) {
       return {
@@ -118,4 +132,5 @@ const getUserInfo = async (accessToken: string): Promise<UserInfoResponse> => {
     };
   }
 };
+
 export default { getToken, getUserInfo };
