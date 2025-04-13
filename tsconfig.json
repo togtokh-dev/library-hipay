@@ -1,28 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES2022", // Modern JS output
-    "module": "ESNext", // Use ES modules
-    "moduleResolution": "Node", // Node-style resolution
-    "esModuleInterop": true, // CommonJS interop
-    "forceConsistentCasingInFileNames": true, // Avoid case mismatch bugs
-    "strict": true, // Enable all strict type-checking
-    "skipLibCheck": true, // Speeds up build by skipping lib checks
-    "declaration": true, // Generate `.d.ts` files
-    "outDir": "./dist", // Output directory
-    "rootDir": "./src", // Root directory for source files
-    "sourceMap": false, // Disable sourcemaps
-    "resolveJsonModule": true, // Allow importing JSON files
-    "noImplicitAny": true, // Disallow `any` type unless explicit
-    "noFallthroughCasesInSwitch": true, // Catch switch fallthrough
-    "allowSyntheticDefaultImports": true, // Allow default imports from modules without default
-    "isolatedModules": true // For better tooling support like Babel/TS with ESM
+    "module": "CommonJS",
+    "target": "ES2022",
+    "sourceMap": false,
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "declaration": true
   },
   "include": [
     "src/**/*",
     "**/*.d.ts"
   ],
   "exclude": [
-    "node_modules",
-    "dist"
+    "node_modules"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@togtokh.dev/hipay",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "hipay is a library for payment gateway.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,8 +10,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-ts": "rm -rf ./dist && npx tsc",
-    "build": "npx tsc",
+    "build": "rm -rf ./dist && npx tsc",
     "debug": "npm run build && npm run watch-debug",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix"
   },
