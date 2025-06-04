@@ -135,7 +135,7 @@ const CHECKOUT_STATUS = async (
           description: resData.description,
           amount: resData.amount,
           statusDate: resData.status_date,
-          paymentId: resData.payment_id,
+          paymentId: resData.payment_id || resData.paymentId,
         },
       };
     } else {
